@@ -13,53 +13,73 @@ class SpanishGrammarApp {
 
   async loadCSV() {
     try {
-      // In a real implementation, you would load from a CSV file
-      // For this demo, we'll use inline data in the CSV format
-      const csvData = `Word,Sentence1,Add1,Translation1,Sentence2,Add2,Translation2,Sentence3,Add3,Translation3,Present,Preterite,Future
-Comer (To Eat),Yo co__ pan,mo,I eat bread,Tu co__ más comida,mes,You eat more food,Ellas co__ helado,men,They eat icecream,"Como, Comes, Come, Comemos, Comen","Comí, Comiste, Comió, Comimos, Comieron","Comeré, Comerás, Comerá, Comeremos, Comerán"
-Hablar (To Speak),Yo ha__ español,blo,I speak Spanish,Tu ha__ inglés,blas,You speak English,Ellos ha__ francés,blan,They speak French,"Hablo, Hablas, Habla, Hablamos, Hablan","Hablé, Hablaste, Habló, Hablamos, Hablaron","Hablaré, Hablarás, Hablará, Hablaremos, Hablarán"
-Vivir (To Live),Yo vi__ aquí,vo,I live here,Tu vi__ allí,ves,You live there,Ella vi__ en Madrid,ve,She lives in Madrid,"Vivo, Vives, Vive, Vivimos, Viven","Viví, Viviste, Vivió, Vivimos, Vivieron","Viviré, Vivirás, Vivirá, Viviremos, Vivirán"`;
+      // Load the Excel file
+      const response = await fetch("content.xlsx");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      const parsed = Papa.parse(csvData, {
-        header: true,
-        skipEmptyLines: true,
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+      // Get the first worksheet
+      const worksheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[worksheetName];
+
+      // Convert to JSON with headers
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      // Convert to object format (first row as headers)
+      const headers = jsonData[0];
+      const rows = jsonData.slice(1);
+
+      this.exercises = rows.map((row) => {
+        const rowData = {};
+        headers.forEach((header, index) => {
+          rowData[header] = row[index] || "";
+        });
+
+        return {
+          word: rowData.Word,
+          sentences: [
+            {
+              prefix: rowData.Sentence1.split("__")[0],
+              suffix: rowData.Sentence1.split("__")[1],
+              answer: rowData.Add1,
+              translation: rowData.Translation1,
+            },
+            {
+              prefix: rowData.Sentence2.split("__")[0],
+              suffix: rowData.Sentence2.split("__")[1],
+              answer: rowData.Add2,
+              translation: rowData.Translation2,
+            },
+            {
+              prefix: rowData.Sentence3.split("__")[0],
+              suffix: rowData.Sentence3.split("__")[1],
+              answer: rowData.Add3,
+              translation: rowData.Translation3,
+            },
+          ],
+          conjugations: {
+            present: rowData.Present.split(", "),
+            preterite: rowData.Preterite.split(", "),
+            future: rowData.Future.split(", "),
+          },
+        };
       });
-
-      this.exercises = parsed.data.map((row) => ({
-        word: row.Word,
-        sentences: [
-          {
-            prefix: row.Sentence1.split("__")[0],
-            suffix: row.Sentence1.split("__")[1],
-            answer: row.Add1,
-            translation: row.Translation1,
-          },
-          {
-            prefix: row.Sentence2.split("__")[0],
-            suffix: row.Sentence2.split("__")[1],
-            answer: row.Add2,
-            translation: row.Translation2,
-          },
-          {
-            prefix: row.Sentence3.split("__")[0],
-            suffix: row.Sentence3.split("__")[1],
-            answer: row.Add3,
-            translation: row.Translation3,
-          },
-        ],
-        conjugations: {
-          present: row.Present.split(", "),
-          preterite: row.Preterite.split(", "),
-          future: row.Future.split(", "),
-        },
-      }));
 
       this.hideLoading();
       this.showCurrentExercise();
     } catch (error) {
-      console.error("Error loading CSV:", error);
-      document.getElementById("loading").textContent =
-        "Error loading exercises. Please try again.";
+      console.error("Error loading Excel file:", error);
+      document.getElementById("loading").innerHTML = `
+                <div style="color: #dc3545;">
+                    <h3>Error loading exercises</h3>
+                    <p>Make sure the <strong>content.xlsx</strong> file is in the same folder as this HTML file.</p>
+                    <p>Error details: ${error.message}</p>
+                </div>
+            `;
     }
   }
 
