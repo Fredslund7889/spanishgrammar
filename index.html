@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spanish Grammar Practice</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Spanish Grammar Practice</h1>
+      </header>
+
+      <main id="app">
+        <div id="loading">Loading exercises...</div>
+
+        <div id="exercise" class="hidden">
+          <div class="word-display">
+            <h2 id="infinitive-word"></h2>
+            <p id="word-translation"></p>
+          </div>
+
+          <div class="sentences">
+            <div class="sentence-group">
+              <div class="sentence">
+                <span id="sentence1-prefix"></span>
+                <input type="text" id="answer1" class="answer-input" />
+                <span id="sentence1-suffix"></span>
+              </div>
+              <div class="translation hidden" id="translation1"></div>
+              <div class="feedback hidden" id="feedback1"></div>
+            </div>
+
+            <div class="sentence-group">
+              <div class="sentence">
+                <span id="sentence2-prefix"></span>
+                <input type="text" id="answer2" class="answer-input" />
+                <span id="sentence2-suffix"></span>
+              </div>
+              <div class="translation hidden" id="translation2"></div>
+              <div class="feedback hidden" id="feedback2"></div>
+            </div>
+
+            <div class="sentence-group">
+              <div class="sentence">
+                <span id="sentence3-prefix"></span>
+                <input type="text" id="answer3" class="answer-input" />
+                <span id="sentence3-suffix"></span>
+              </div>
+              <div class="translation hidden" id="translation3"></div>
+              <div class="feedback hidden" id="feedback3"></div>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button id="check-btn">Done</button>
+            <button id="next-btn" class="hidden">Next Exercise</button>
+          </div>
+
+          <div id="conjugation-table" class="hidden">
+            <h3>Conjugation Table</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Pronoun</th>
+                  <th>Present</th>
+                  <th>Preterite</th>
+                  <th>Future</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Yo</td>
+                  <td id="present-yo"></td>
+                  <td id="preterite-yo"></td>
+                  <td id="future-yo"></td>
+                </tr>
+                <tr>
+                  <td>Tú</td>
+                  <td id="present-tu"></td>
+                  <td id="preterite-tu"></td>
+                  <td id="future-tu"></td>
+                </tr>
+                <tr>
+                  <td>Él/Ella/Usted</td>
+                  <td id="present-el"></td>
+                  <td id="preterite-el"></td>
+                  <td id="future-el"></td>
+                </tr>
+                <tr>
+                  <td>Nosotros</td>
+                  <td id="present-nosotros"></td>
+                  <td id="preterite-nosotros"></td>
+                  <td id="future-nosotros"></td>
+                </tr>
+                <tr>
+                  <td>Ellos/Ustedes</td>
+                  <td id="present-ellos"></td>
+                  <td id="preterite-ellos"></td>
+                  <td id="future-ellos"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
