@@ -1,7 +1,8 @@
 class SpanishGrammarApp {
   constructor() {
     this.exercises = [];
-    this.currentExercise = 0;
+    this.availableExercises = []; // Track unused exercises
+    this.currentExercise = null;
     this.isAnswered = false;
     this.init();
   }
@@ -69,6 +70,12 @@ class SpanishGrammarApp {
         };
       });
 
+      // Initialize available exercises array with all indices
+      this.availableExercises = Array.from(
+        { length: this.exercises.length },
+        (_, i) => i
+      );
+
       this.hideLoading();
       this.showCurrentExercise();
     } catch (error) {
@@ -106,12 +113,32 @@ class SpanishGrammarApp {
     document.getElementById("exercise").classList.remove("hidden");
   }
 
+  getRandomExercise() {
+    if (this.availableExercises.length === 0) {
+      return null; // No more exercises available
+    }
+
+    // Pick a random index from available exercises
+    const randomIndex = Math.floor(
+      Math.random() * this.availableExercises.length
+    );
+    const exerciseIndex = this.availableExercises[randomIndex];
+
+    // Remove this exercise from available exercises
+    this.availableExercises.splice(randomIndex, 1);
+
+    return exerciseIndex;
+  }
+
   showCurrentExercise() {
-    if (this.currentExercise >= this.exercises.length) {
+    const exerciseIndex = this.getRandomExercise();
+
+    if (exerciseIndex === null) {
       this.showCompleted();
       return;
     }
 
+    this.currentExercise = exerciseIndex;
     const exercise = this.exercises[this.currentExercise];
     this.isAnswered = false;
 
@@ -135,6 +162,20 @@ class SpanishGrammarApp {
 
     // Set conjugation table
     this.setConjugationTable(exercise.conjugations);
+
+    // Update progress indicator (optional)
+    this.updateProgress();
+  }
+
+  updateProgress() {
+    const total = this.exercises.length;
+    const completed = total - this.availableExercises.length;
+
+    // You can add this to your HTML to show progress
+    const progressElement = document.getElementById("progress");
+    if (progressElement) {
+      progressElement.textContent = `Exercise ${completed} of ${total}`;
+    }
   }
 
   resetUI() {
@@ -216,7 +257,6 @@ class SpanishGrammarApp {
   }
 
   nextExercise() {
-    this.currentExercise++;
     this.showCurrentExercise();
   }
 
